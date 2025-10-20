@@ -67,3 +67,19 @@ Thumbs.db.meta
 
 # Built report
 rapport.pdf
+ProjectSettings
+.utmp
+Assets/Scenes/SampleScene/LightingData.asset
+Assets/Scenes/SampleScene/Lightmap-0_comp_dir.png.meta
+Assets/Scenes/SampleScene/Lightmap-0_comp_light.exr.meta
+Assets/Scenes/SampleScene/ReflectionProbe-0.exr
+Assets/Settings/Project Configuration/Performance URP Config.asset
+Assets/Settings/Project Configuration/Quality URP Config.asset
+Assets/Settings/Project Configuration/UniversalRenderPipelineGlobalSettings.asset
+Assets/Scenes/SampleScene/LightingData.asset
+Assets/Scenes/SampleScene/Lightmap-0_comp_dir.png.meta
+Assets/Scenes/SampleScene/Lightmap-0_comp_light.exr.meta
+Assets/Scenes/SampleScene/ReflectionProbe-0.exr
+Assets/Settings/Project Configuration/Performance URP Config.asset
+Assets/Settings/Project Configuration/Quality URP Config.asset
+Assets/Settings/Project Configuration/UniversalRenderPipelineGlobalSettings.asset
