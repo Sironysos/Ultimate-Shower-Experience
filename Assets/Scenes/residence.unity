@@ -321,6 +321,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7635826562936255635, guid: aafc7de12adcbb947986214b11d7a370, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 41ae4b6555598b745b0c6b526ff7bd9e, type: 2}
     - target: {fileID: 919132149155446097, guid: aafc7de12adcbb947986214b11d7a370, type: 3}
       propertyPath: m_Name
       value: footLeft
@@ -566,6 +570,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7635826562936255635, guid: d7753dd5b839d73429eb5f52e54e7405, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 41ae4b6555598b745b0c6b526ff7bd9e, type: 2}
     - target: {fileID: 919132149155446097, guid: d7753dd5b839d73429eb5f52e54e7405, type: 3}
       propertyPath: m_Name
       value: footRight
@@ -628,6 +636,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7635826562936255635, guid: a540d2f0f76983244969485707c2dd0f, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 41ae4b6555598b745b0c6b526ff7bd9e, type: 2}
     - target: {fileID: 919132149155446097, guid: a540d2f0f76983244969485707c2dd0f, type: 3}
       propertyPath: m_Name
       value: beakBot
@@ -756,6 +768,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7635826562936255635, guid: 4f61618f04f63b74e92789e715ca6400, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 41ae4b6555598b745b0c6b526ff7bd9e, type: 2}
     - target: {fileID: 919132149155446097, guid: 4f61618f04f63b74e92789e715ca6400, type: 3}
       propertyPath: m_Name
       value: beakTop
