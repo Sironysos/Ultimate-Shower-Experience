@@ -513,7 +513,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &9450181
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4320,41 +4320,41 @@ MonoBehaviour:
   m_StepButtonTextField: {fileID: 3409566789092376685}
   m_StepList:
   - stepObject: {fileID: 1961720573}
-    buttonText: pipi
+    buttonText: Commencer
   - stepObject: {fileID: 1074015256}
-    buttonText: Continue
+    buttonText: Continuer
   - stepObject: {fileID: 1364573171}
-    buttonText: Continue
+    buttonText: Continuer
   - stepObject: {fileID: 1239798474}
-    buttonText: Continue
+    buttonText: Continuer
   - stepObject: {fileID: 2101994692}
-    buttonText: Continue
+    buttonText: Continuer
   - stepObject: {fileID: 1649289601}
-    buttonText: Continue
+    buttonText: Continuer
   - stepObject: {fileID: 2088830415}
-    buttonText: Restart
+    buttonText: Continuer
   - stepObject: {fileID: 1313195747}
-    buttonText: Restart
+    buttonText: Continuer
   - stepObject: {fileID: 639288148}
-    buttonText: Restart
+    buttonText: Continuer
   - stepObject: {fileID: 1248132829}
-    buttonText: Restart
+    buttonText: Continuer
   - stepObject: {fileID: 271773390}
-    buttonText: Restart
+    buttonText: Continuer
   - stepObject: {fileID: 583384134}
-    buttonText: Restart
+    buttonText: Continuer
   - stepObject: {fileID: 660545150}
-    buttonText: Restart
+    buttonText: Continuer
   - stepObject: {fileID: 1542918752}
-    buttonText: Restart
+    buttonText: Continuer
   - stepObject: {fileID: 778717867}
-    buttonText: Restart
+    buttonText: Continuer
   - stepObject: {fileID: 465662871}
-    buttonText: Restart
+    buttonText: Continuer
   - stepObject: {fileID: 592501715}
-    buttonText: Restart
+    buttonText: Continuer
   - stepObject: {fileID: 1855362508}
-    buttonText: Restart
+    buttonText: Terminer
 --- !u!1 &169311054
 GameObject:
   m_ObjectHideFlags: 0
@@ -9967,7 +9967,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &387323565
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12304,7 +12304,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &440167760
 RectTransform:
   m_ObjectHideFlags: 0
@@ -16841,7 +16841,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &625298167
 RectTransform:
   m_ObjectHideFlags: 0
@@ -22014,7 +22014,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &783728583
 RectTransform:
   m_ObjectHideFlags: 0
@@ -30400,7 +30400,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1059100449
 RectTransform:
   m_ObjectHideFlags: 0
@@ -31962,7 +31962,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1109773713
 RectTransform:
   m_ObjectHideFlags: 0
@@ -32509,7 +32509,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1147146837
 RectTransform:
   m_ObjectHideFlags: 0
@@ -34169,7 +34169,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2441754920960949527, guid: 215687feeab0b7445b4a1cd86c82c2e1, type: 3}
+  m_Sprite: {fileID: -3662145209645026858, guid: 215687feeab0b7445b4a1cd86c82c2e1, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -39482,7 +39482,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1393778470
 RectTransform:
   m_ObjectHideFlags: 0
@@ -42114,7 +42114,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1467314489
 RectTransform:
   m_ObjectHideFlags: 0
@@ -44204,7 +44204,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1533205995
 RectTransform:
   m_ObjectHideFlags: 0
@@ -47579,7 +47579,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1634773423
 RectTransform:
   m_ObjectHideFlags: 0
@@ -58641,7 +58641,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1987130918
 RectTransform:
   m_ObjectHideFlags: 0
@@ -59148,8 +59148,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Bienvenue dans le niveau \"Douche des r\xE9sidences\" ! Cliquez sur \"Continue\"
-    pour voir les objectifs du niveau."
+  m_text: "Bienvenue dans le niveau \"Douche des r\xE9sidences\" ! Cliquez sur \"Commencer\"
+    pour parcourir les objectifs du niveau."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f675742eaf9c20a4f909d78ee7a14fed, type: 2}
   m_sharedMaterial: {fileID: 4687939059374929122, guid: f675742eaf9c20a4f909d78ee7a14fed, type: 2}
