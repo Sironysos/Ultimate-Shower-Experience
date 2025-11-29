@@ -14,9 +14,9 @@ public class sceneChange : MonoBehaviour
         SceneManager.LoadScene("Hub");
     }
 
-    public void GoToDoucheResidenceScene()
+    public void GoToResidenceScene()
     {
-        SceneManager.LoadScene("Douche résidence");
+        SceneManager.LoadScene("Residence");
     }
 
     public void GoToModerneScene()
