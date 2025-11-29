@@ -3,20 +3,25 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class TowelDryDetector_Rigid : MonoBehaviour
 {
+    [Header("Réglages du frottement")]
     public float minVelocity = 0.4f;
     public float minDirectionChange = 0.25f;
     public float dryScorePerSwipe = 0.3f;
 
+    [Header("Progression")]
+    public float dryingProgress = 0f; // 0 = trempé, 1 = sec
+
     private Vector3 lastPos;
     private Vector3 lastVelocity;
 
-    public float dryingProgress = 0f; // 0 = trempé, 1 = sec
-
     private UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable grab;
+
+    // ---- NOUVEAU ----
+    private bool isTouchingPenguin = false;
 
     void Start()
     {
-        lastPos = transform.position; // <-- le mesh rigide lui-même
+        lastPos = transform.position;
 
         grab = GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>();
         if (grab != null)
@@ -33,10 +38,16 @@ public class TowelDryDetector_Rigid : MonoBehaviour
         {
             float dirDot = Vector3.Dot(velocity.normalized, lastVelocity.normalized);
 
-            // Changement de direction = mouvement de frottement
+            // Détection du va-et-vient
             if (dirDot < -minDirectionChange)
             {
-                dryingProgress = Mathf.Clamp01(dryingProgress + dryScorePerSwipe);
+                // ---- CONDITION IMPORTANTE ----
+                if (isTouchingPenguin)
+                {
+                    dryingProgress = Mathf.Clamp01(dryingProgress + dryScorePerSwipe);
+
+                    Debug.Log($"Séchage → {dryingProgress * 100f}%");
+                }
             }
         }
 
@@ -52,5 +63,24 @@ public class TowelDryDetector_Rigid : MonoBehaviour
     public void ResetDrying()
     {
         dryingProgress = 0f;
+    }
+
+    // -------- DÉTECTION DE CONTACT --------
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Penguin"))
+        {
+            isTouchingPenguin = true;
+            Debug.Log("Serviette en contact avec le pingouin.");
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Penguin"))
+        {
+            isTouchingPenguin = false;
+            Debug.Log("Serviette n'est plus en contact avec le pingouin.");
+        }
     }
 }

@@ -1,6 +1,5 @@
 using UnityEngine;
 
-
 public class SoapWashDetector_Simple : MonoBehaviour
 {
     [Header("Réglages du frottement")]
@@ -12,7 +11,7 @@ public class SoapWashDetector_Simple : MonoBehaviour
     public float washProgress = 0f;
 
     [Header("Effets")]
-    public ParticleSystem bubbleParticles;   // optionnel
+    public ParticleSystem bubbleParticles;
 
     private Vector3 lastPos;
     private Vector3 lastVelocity;
@@ -20,13 +19,14 @@ public class SoapWashDetector_Simple : MonoBehaviour
     private UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable grab;
     private bool isHeld = false;
 
+    // ---- NOUVEAU ----
+    private bool isTouchingPenguin = false;
+
     void Start()
     {
         lastPos = transform.position;
-
         grab = GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>();
 
-        // Quand on attrape le savon
         grab.selectEntered.AddListener((args) =>
         {
             isHeld = true;
@@ -34,11 +34,11 @@ public class SoapWashDetector_Simple : MonoBehaviour
             lastVelocity = Vector3.zero;
         });
 
-        // Quand on lâche le savon
         grab.selectExited.AddListener((args) =>
         {
             isHeld = false;
             washProgress = Mathf.Clamp01(washProgress);
+
             Debug.Log($"[SAVON RELÂCHÉ] Savonnage = {washProgress * 100f}%");
 
             if (bubbleParticles != null)
@@ -57,22 +57,47 @@ public class SoapWashDetector_Simple : MonoBehaviour
         {
             float dirDot = Vector3.Dot(velocity.normalized, lastVelocity.normalized);
 
-            // Détection du va-et-vient
+            // Condition : accélération + changement de direction
             if (dirDot < -minDirectionChange)
             {
-                washProgress = Mathf.Clamp01(washProgress + washScorePerSwipe);
+                // ---- NOUVELLE CONDITION ----
+                if (isTouchingPenguin)
+                {
+                    washProgress = Mathf.Clamp01(washProgress + washScorePerSwipe);
 
-                if (bubbleParticles != null && !bubbleParticles.isPlaying)
-                    bubbleParticles.Play();
+                    if (bubbleParticles != null && !bubbleParticles.isPlaying)
+                        bubbleParticles.Play();
+                }
             }
         }
         else
         {
-            if (bubbleParticles != null && bubbleParticles.isPlaying)
+            if (bubbleParticles != null && bubbleParticles.isPlaying && !isTouchingPenguin)
                 bubbleParticles.Stop();
         }
 
         lastVelocity = velocity;
         lastPos = transform.position;
+    }
+
+    // ---- DÉTECTION DE CONTACT ----
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Penguin"))
+        {
+            isTouchingPenguin = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Penguin"))
+        {
+            isTouchingPenguin = false;
+
+            if (bubbleParticles != null)
+                bubbleParticles.Stop();
+        }
     }
 }
