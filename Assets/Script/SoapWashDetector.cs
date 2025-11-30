@@ -1,21 +1,18 @@
 using UnityEngine;
-using System.Collections.Generic; // IMPORTANT pour List<T>
+using System.Collections.Generic;
 
 public class SoapWashDetector_Simple : MonoBehaviour
 {
     [Header("Réglages du frottement")]
     public float minVelocity = 0.2f;
     public float minDirectionChange = 0.15f;
-    public float washScorePerSwipe = 0.2f;
 
-    [Header("Progression")]
+    [Header("Progression (savonnage)")]
     public float washProgress = 0f;
-
-    [Header("Effets temporaires (Bulles du savon)")]
-    public ParticleSystem bubbleParticles;
+    public int bubblesNeededForFullWash = 50;  // Nombre de bulles pour atteindre 100%
 
     [Header("Mousse persistante")]
-    public GameObject foamPrefab;                // <<< manquait dans ton code !
+    public GameObject foamPrefab;
     public Transform penguinRoot;
     public float foamSpawnRate = 0.05f;
     private float lastFoamTime = 0f;
@@ -35,9 +32,12 @@ public class SoapWashDetector_Simple : MonoBehaviour
 
     private bool isTouchingPenguin = false;
 
+    private BubbleSoundOnSpawnRandom bubbleSoundManager;
 
     void Start()
     {
+        bubbleSoundManager = FindObjectOfType<BubbleSoundOnSpawnRandom>();
+
         lastPos = transform.position;
         grab = GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>();
 
@@ -54,9 +54,6 @@ public class SoapWashDetector_Simple : MonoBehaviour
             washProgress = Mathf.Clamp01(washProgress);
 
             Debug.Log($"[SAVON RELÂCHÉ] Savonnage = {washProgress * 100f}%");
-
-            if (bubbleParticles != null)
-                bubbleParticles.Stop();
         });
     }
 
@@ -76,20 +73,10 @@ public class SoapWashDetector_Simple : MonoBehaviour
             {
                 if (isTouchingPenguin)
                 {
-                    washProgress = Mathf.Clamp01(washProgress + washScorePerSwipe);
-
-                    if (bubbleParticles != null && !bubbleParticles.isPlaying)
-                        bubbleParticles.Play();
-
-                    // --- Spawn mousse persistante ---
                     TrySpawnFoam();
+                    UpdateWashProgress();
                 }
             }
-        }
-        else
-        {
-            if (bubbleParticles != null && bubbleParticles.isPlaying && !isTouchingPenguin)
-                bubbleParticles.Stop();
         }
 
         lastVelocity = velocity;
@@ -97,7 +84,7 @@ public class SoapWashDetector_Simple : MonoBehaviour
     }
 
 
-    // --- Vérifie si on peut spawn une nouvelle bulle ---
+    // Ajoute une nouvelle bulle au bon rythme
     private void TrySpawnFoam()
     {
         if (Time.time - lastFoamTime < foamSpawnRate)
@@ -108,7 +95,7 @@ public class SoapWashDetector_Simple : MonoBehaviour
     }
 
 
-    // --- Crée une bulle persistante collée au pingouin ---
+    // Crée une bulle et l’attache au pingouin
     private void SpawnFoam()
     {
         if (foamPrefab == null || penguinRoot == null)
@@ -125,12 +112,26 @@ public class SoapWashDetector_Simple : MonoBehaviour
         // La mousse reste collée au pingouin
         foam.transform.SetParent(penguinRoot, true);
 
-        // On l’ajoute à la liste pour pouvoir la supprimer sous la douche
+        // On ajoute à la liste
         foamInstances.Add(foam);
+
+        // ---- Joue le son de bulle ----
+        if (bubbleSoundManager != null)
+            bubbleSoundManager.PlayBubbleSound();
     }
 
 
-    // ---- Détection de contact avec le pingouin ----
+
+    // Met à jour la progression selon le nombre de bulles créées
+    private void UpdateWashProgress()
+    {
+        washProgress = Mathf.Clamp01((float)foamInstances.Count / bubblesNeededForFullWash);
+
+        Debug.Log($"Savonnage : {(washProgress * 100f):F0}%");
+    }
+
+
+    // Détection contact pingouin
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Penguin"))
@@ -144,9 +145,6 @@ public class SoapWashDetector_Simple : MonoBehaviour
         if (other.CompareTag("Penguin"))
         {
             isTouchingPenguin = false;
-
-            if (bubbleParticles != null)
-                bubbleParticles.Stop();
         }
     }
 }

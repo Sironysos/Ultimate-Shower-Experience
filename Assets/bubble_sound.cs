@@ -2,36 +2,23 @@ using UnityEngine;
 
 public class BubbleSoundOnSpawnRandom : MonoBehaviour
 {
-    public ParticleSystem ps;
+    [Header("Configuration Audio")]
     public AudioSource audioSource;
 
-    [Header("Liste des sons de bulles")]
+    [Header("Sons de bulles disponibles")]
     public AudioClip[] bubbleSounds;
 
-    private int lastParticleCount = 0;
-
-    void Start()
+    // Appelé quand une bulle apparait
+    public void PlayBubbleSound()
     {
-        if (ps == null) ps = GetComponent<ParticleSystem>();
-    }
+        if (bubbleSounds.Length == 0 || audioSource == null)
+            return;
 
-    void Update()
-    {
-        int currentCount = ps.particleCount;
+        AudioClip randomClip = bubbleSounds[Random.Range(0, bubbleSounds.Length)];
 
-        if (currentCount > lastParticleCount)
-        {
-            // Une ou plusieurs particules viennent de spawn
-            if (bubbleSounds.Length > 0)
-            {
-                AudioClip randomClip = bubbleSounds[Random.Range(0, bubbleSounds.Length)];
+        // Léger pitch random pour un rendu vivant
+        audioSource.pitch = Random.Range(0.9f, 1.1f);
 
-                // On varie un peu le pitch pour un rendu plus naturel
-                audioSource.pitch = Random.Range(0.9f, 1.1f);
-                audioSource.PlayOneShot(randomClip);
-            }
-        }
-
-        lastParticleCount = currentCount;
+        audioSource.PlayOneShot(randomClip);
     }
 }
