@@ -142,11 +142,33 @@ public class KnobRotator : MonoBehaviour
             float t = Mathf.InverseLerp(0, 180, finalAngle);
             currentTemperature = Mathf.Lerp(20, 60, t); // Hot
         }
+
+        UpdateParticleColor();
     }
     
     float NormalizeAngle(float a)
     {
         if (a > 180) a -= 360;
         return a;
+    }
+
+    void UpdateParticleColor()
+    {
+        if (showerParticles == null) return;
+
+        var main = showerParticles.main;
+
+        if (currentTemperature <= 10f)
+        {
+            main.startColor = Color.blue;           // Froid
+        }
+        else if (currentTemperature <= 30f)
+        {
+            main.startColor = Color.white;         // tiède
+        }
+        else
+        {
+            main.startColor = Color.red;           // Chaud
+        }
     }
 }
