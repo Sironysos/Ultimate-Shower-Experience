@@ -6,12 +6,14 @@ public class KnobRotator : MonoBehaviour
     public float rotationSpeed = 1f;
     private UnityEngine.XR.Interaction.Toolkit.Interactors.XRBaseInteractor interactor;
     private bool isGrabbed = false;
-
     private Quaternion startHandRotation;
     private float startAngle;
 
     [Header("Shower Control")]
     public ParticleSystem showerParticles;
+    public float showerDuration = 5f; // Durée en secondes
+    private float showerTimer = 0f;
+    private bool showerActive = false;
 
     public void OnGrabbed(SelectEnterEventArgs args)
     {
@@ -33,43 +35,68 @@ public class KnobRotator : MonoBehaviour
         // ------ LOGIC ------
         if (finalAngle >= -30f && finalAngle <= 30f)
         {
-            Debug.Log("�teint");
-            if (showerParticles.isPlaying)
-                showerParticles.Stop();
+            Debug.Log("Éteint");
+            // Ne rien faire, reste éteint
         }
         else if (finalAngle < 0f)
         {
             float coldPercent = Mathf.InverseLerp(0f, -180f, finalAngle);
             float temperature = Mathf.Lerp(20f, 5f, coldPercent);
-            Debug.Log($"Eau froide � Temp�rature : {temperature:F1}�C");
-
-            if (!showerParticles.isPlaying)
-                showerParticles.Play();
+            Debug.Log($"Eau froide – Température : {temperature:F1}°C");
+            
+            // Activer la douche pour 5 secondes
+            ActivateShower();
         }
         else if (finalAngle > 0f)
         {
             float hotPercent = Mathf.InverseLerp(0f, 180f, finalAngle);
             float temperature = Mathf.Lerp(20f, 60f, hotPercent);
-            Debug.Log($"Eau chaude � Temp�rature : {temperature:F1}�C");
-
-            if (!showerParticles.isPlaying)
-                showerParticles.Play();
+            Debug.Log($"Eau chaude – Température : {temperature:F1}°C");
+            
+            // Activer la douche pour 5 secondes
+            ActivateShower();
         }
+    }
+
+    void ActivateShower()
+    {
+        if (!showerParticles.isPlaying)
+            showerParticles.Play();
+        
+        showerTimer = showerDuration; // Réinitialiser le timer à 5 secondes
+        showerActive = true;
     }
 
     void Update()
     {
-        if (!isGrabbed || interactor == null) return;
+        // Gestion de la rotation du bouton
+        if (isGrabbed && interactor != null)
+        {
+            Quaternion delta = interactor.transform.rotation * Quaternion.Inverse(startHandRotation);
+            float deltaZ = delta.eulerAngles.z;
+            if (deltaZ > 180f) deltaZ -= 360f;
 
-        Quaternion delta = interactor.transform.rotation * Quaternion.Inverse(startHandRotation);
-        float deltaZ = delta.eulerAngles.z;
-        if (deltaZ > 180f) deltaZ -= 360f;
+            float newAngle = startAngle + deltaZ * rotationSpeed;
+            Vector3 euler = transform.localEulerAngles;
+            euler.z = newAngle;
+            transform.localEulerAngles = euler;
+        }
 
-        float newAngle = startAngle + deltaZ * rotationSpeed;
-
-        Vector3 euler = transform.localEulerAngles;
-        euler.z = newAngle;
-        transform.localEulerAngles = euler;
+        // Gestion du timer de la douche
+        if (showerActive)
+        {
+            showerTimer -= Time.deltaTime;
+            
+            if (showerTimer <= 0f)
+            {
+                // Éteindre la douche après 5 secondes
+                if (showerParticles.isPlaying)
+                    showerParticles.Stop();
+                
+                showerActive = false;
+                Debug.Log("Douche éteinte automatiquement");
+            }
+        }
     }
 
     float NormalizeAngle(float angle)
