@@ -9,11 +9,7 @@ public class KnobRotator : MonoBehaviour
     private Quaternion startHandRotation;
     private float startAngle;
 
-    [Header("Shower Control")]
-    public ParticleSystem showerParticles;
-    public float showerDuration = 5f; // Durée en secondes
-    private float showerTimer = 0f;
-    private bool showerActive = false;
+    public float currentTemperature = 20f;
 
     public void OnGrabbed(SelectEnterEventArgs args)
     {
@@ -30,78 +26,50 @@ public class KnobRotator : MonoBehaviour
         isGrabbed = false;
         interactor = null;
 
-        float finalAngle = NormalizeAngle(transform.localEulerAngles.z);
-
-        // ------ LOGIC ------
-        if (finalAngle >= -30f && finalAngle <= 30f)
-        {
-            Debug.Log("Éteint");
-            // Ne rien faire, reste éteint
-        }
-        else if (finalAngle < 0f)
-        {
-            float coldPercent = Mathf.InverseLerp(0f, -180f, finalAngle);
-            float temperature = Mathf.Lerp(20f, 5f, coldPercent);
-            Debug.Log($"Eau froide – Température : {temperature:F1}°C");
-            
-            // Activer la douche pour 5 secondes
-            ActivateShower();
-        }
-        else if (finalAngle > 0f)
-        {
-            float hotPercent = Mathf.InverseLerp(0f, 180f, finalAngle);
-            float temperature = Mathf.Lerp(20f, 60f, hotPercent);
-            Debug.Log($"Eau chaude – Température : {temperature:F1}°C");
-            
-            // Activer la douche pour 5 secondes
-            ActivateShower();
-        }
-    }
-
-    void ActivateShower()
-    {
-        if (!showerParticles.isPlaying)
-            showerParticles.Play();
-        
-        showerTimer = showerDuration; // Réinitialiser le timer à 5 secondes
-        showerActive = true;
+        // ?? LOG TEMPERATURE LORS DU REL�CHEMENT
+        Debug.Log($"Temp�rature r�gl�e : {currentTemperature:F1}�C");
     }
 
     void Update()
     {
-        // Gestion de la rotation du bouton
-        if (isGrabbed && interactor != null)
-        {
-            Quaternion delta = interactor.transform.rotation * Quaternion.Inverse(startHandRotation);
-            float deltaZ = delta.eulerAngles.z;
-            if (deltaZ > 180f) deltaZ -= 360f;
+        if (!isGrabbed || interactor == null) return;
 
-            float newAngle = startAngle + deltaZ * rotationSpeed;
-            Vector3 euler = transform.localEulerAngles;
-            euler.z = newAngle;
-            transform.localEulerAngles = euler;
+        Quaternion delta = interactor.transform.rotation * Quaternion.Inverse(startHandRotation);
+        float deltaZ = delta.eulerAngles.z;
+        if (deltaZ > 180f) deltaZ -= 360f;
+
+        float newAngle = startAngle + deltaZ * rotationSpeed;
+
+        Vector3 euler = transform.localEulerAngles;
+        euler.z = newAngle;
+        transform.localEulerAngles = euler;
+
+        UpdateTemperature(newAngle);
+    }
+
+    void UpdateTemperature(float angle)
+    {
+        float finalAngle = NormalizeAngle(angle);
+
+        if (finalAngle >= -30 && finalAngle <= 30)
+        {
+            currentTemperature = 20f;  // neutre
         }
-
-        // Gestion du timer de la douche
-        if (showerActive)
+        else if (finalAngle < 0)
         {
-            showerTimer -= Time.deltaTime;
-            
-            if (showerTimer <= 0f)
-            {
-                // Éteindre la douche après 5 secondes
-                if (showerParticles.isPlaying)
-                    showerParticles.Stop();
-                
-                showerActive = false;
-                Debug.Log("Douche éteinte automatiquement");
-            }
+            float t = Mathf.InverseLerp(0, -180, finalAngle);
+            currentTemperature = Mathf.Lerp(20, 5, t); // Cold
+        }
+        else
+        {
+            float t = Mathf.InverseLerp(0, 180, finalAngle);
+            currentTemperature = Mathf.Lerp(20, 60, t); // Hot
         }
     }
 
-    float NormalizeAngle(float angle)
+    float NormalizeAngle(float a)
     {
-        if (angle > 180f) angle -= 360f;
-        return angle;
+        if (a > 180) a -= 360;
+        return a;
     }
 }
