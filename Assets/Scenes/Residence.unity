@@ -2688,7 +2688,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: c280eab3fb9a5c4439ea8bca4500b5c6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9a438139089813f4181c9e59dd9af103, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8709,7 +8709,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ece68e4007e7f2449f0be626450e8b6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1537cbc7811291d438a0b69e845dddd7, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -11684,7 +11684,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 9a438139089813f4181c9e59dd9af103, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c280eab3fb9a5c4439ea8bca4500b5c6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -11885,7 +11885,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Rince le pingouin maintenant. \nIl ne doit plus y avoir de savon sur lui."
+  m_text: "Arrose la plante avec l'eau r\xE9colt\xE9e dans le sceau."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f675742eaf9c20a4f909d78ee7a14fed, type: 2}
   m_sharedMaterial: {fileID: 4687939059374929122, guid: f675742eaf9c20a4f909d78ee7a14fed, type: 2}
@@ -14384,7 +14384,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 1537cbc7811291d438a0b69e845dddd7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5ece68e4007e7f2449f0be626450e8b6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -16058,9 +16058,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Avant de rincer le pingouin, \nr\xE9cup\xE8re l'eau de chauffe avec le
-    sceau. \nPour allumer la douche, \nappuie sur le bouton sous le pommeau. \nPour
-    r\xE9gler la temp\xE9rature, tourne le bouton."
+  m_text: "Il faut maintenant chercher le savon. \nTrouve-le dans la salle de bain.
+    \nEnsuite, savonne le pingouin."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f675742eaf9c20a4f909d78ee7a14fed, type: 2}
   m_sharedMaterial: {fileID: 4687939059374929122, guid: f675742eaf9c20a4f909d78ee7a14fed, type: 2}
@@ -16087,8 +16086,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 12
-  m_fontSizeBase: 12
+  m_fontSize: 16
+  m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -17006,8 +17005,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Il faut maintenant chercher le savon. \nTrouve-le dans la salle de bain.
-    \nEnsuite, savonne le pingouin."
+  m_text: "Avant de r\xE9gler la temp\xE9rature, \nr\xE9cup\xE8re l'eau de chauffe
+    avec le sceau. \nPour allumer la douche, \nappuie sur le bouton droit sous le
+    pommeau. \nPour r\xE9gler la temp\xE9rature, tourne le bouton gauche."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f675742eaf9c20a4f909d78ee7a14fed, type: 2}
   m_sharedMaterial: {fileID: 4687939059374929122, guid: f675742eaf9c20a4f909d78ee7a14fed, type: 2}
@@ -17034,8 +17034,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 16
-  m_fontSizeBase: 16
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -18262,7 +18262,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Arrose la plante avec l'eau r\xE9colt\xE9e dans le sceau."
+  m_text: "Rince le pingouin maintenant. \nIl ne doit plus y avoir de savon sur lui."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f675742eaf9c20a4f909d78ee7a14fed, type: 2}
   m_sharedMaterial: {fileID: 4687939059374929122, guid: f675742eaf9c20a4f909d78ee7a14fed, type: 2}
