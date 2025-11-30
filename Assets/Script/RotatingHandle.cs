@@ -8,11 +8,7 @@ public class KnobRotator : MonoBehaviour
     private bool isGrabbed = false;
     private Quaternion startHandRotation;
     private float startAngle;
-<<<<<<< HEAD
-
     public float currentTemperature = 20f;
-
-=======
     
     [Header("Shower Control")]
     public ParticleSystem showerParticles;
@@ -23,7 +19,22 @@ public class KnobRotator : MonoBehaviour
     [Header("Sound")]
     public AudioSource audioSource;
     
->>>>>>> 1b2f03821ea65495ee9d86843a6ab0ffa6a5c3d7
+    void Start()
+    {
+        // Configure l'AudioSource si assigné
+        if (audioSource != null)
+        {
+            audioSource.playOnAwake = false;
+            audioSource.loop = true;
+            audioSource.spatialBlend = 1f; // Son 3D
+            audioSource.spatialize = true;
+            audioSource.minDistance = 0.1f;
+            audioSource.maxDistance = 50f;
+            audioSource.rolloffMode = AudioRolloffMode.Linear;
+            audioSource.volume = 0.1f;
+        }
+    }
+    
     public void OnGrabbed(SelectEnterEventArgs args)
     {
         interactor = args.interactorObject as UnityEngine.XR.Interaction.Toolkit.Interactors.XRBaseInteractor;
@@ -38,42 +49,25 @@ public class KnobRotator : MonoBehaviour
     {
         isGrabbed = false;
         interactor = null;
-<<<<<<< HEAD
-
-        // ?? LOG TEMPERATURE LORS DU REL�CHEMENT
-        Debug.Log($"Temp�rature r�gl�e : {currentTemperature:F1}�C");
-=======
         
+        // Gestion de la douche selon la température
         float finalAngle = NormalizeAngle(transform.localEulerAngles.z);
         
-        // ------ LOGIC ------
         if (finalAngle >= -30f && finalAngle <= 30f)
         {
-            Debug.Log("Éteint");
-            // Arrêter la douche et le son
+            Debug.Log($"Température réglée : {currentTemperature:F1}°C - Éteint");
             StopShower();
         }
-        else if (finalAngle < 0f)
+        else
         {
-            float coldPercent = Mathf.InverseLerp(0f, -180f, finalAngle);
-            float temperature = Mathf.Lerp(20f, 5f, coldPercent);
-            Debug.Log($"Eau froide – Température : {temperature:F1}°C");
-            
-            ActivateShower();
-        }
-        else if (finalAngle > 0f)
-        {
-            float hotPercent = Mathf.InverseLerp(0f, 180f, finalAngle);
-            float temperature = Mathf.Lerp(20f, 60f, hotPercent);
-            Debug.Log($"Eau chaude – Température : {temperature:F1}°C");
-            
+            Debug.Log($"Température réglée : {currentTemperature:F1}°C");
             ActivateShower();
         }
     }
     
     void ActivateShower()
     {
-        if (!showerParticles.isPlaying)
+        if (showerParticles != null && !showerParticles.isPlaying)
             showerParticles.Play();
         
         // Démarrer le son de douche
@@ -84,12 +78,11 @@ public class KnobRotator : MonoBehaviour
         
         showerTimer = showerDuration;
         showerActive = true;
->>>>>>> 1b2f03821ea65495ee9d86843a6ab0ffa6a5c3d7
     }
     
     void StopShower()
     {
-        if (showerParticles.isPlaying)
+        if (showerParticles != null && showerParticles.isPlaying)
             showerParticles.Stop();
         
         // Arrêter le son
@@ -103,24 +96,6 @@ public class KnobRotator : MonoBehaviour
     
     void Update()
     {
-<<<<<<< HEAD
-        if (!isGrabbed || interactor == null) return;
-
-        Quaternion delta = interactor.transform.rotation * Quaternion.Inverse(startHandRotation);
-        float deltaZ = delta.eulerAngles.z;
-        if (deltaZ > 180f) deltaZ -= 360f;
-
-        float newAngle = startAngle + deltaZ * rotationSpeed;
-
-        Vector3 euler = transform.localEulerAngles;
-        euler.z = newAngle;
-        transform.localEulerAngles = euler;
-
-        UpdateTemperature(newAngle);
-    }
-
-    void UpdateTemperature(float angle)
-=======
         // Gestion de la rotation du bouton
         if (isGrabbed && interactor != null)
         {
@@ -132,6 +107,8 @@ public class KnobRotator : MonoBehaviour
             Vector3 euler = transform.localEulerAngles;
             euler.z = newAngle;
             transform.localEulerAngles = euler;
+            
+            UpdateTemperature(newAngle);
         }
         
         // Gestion du timer de la douche
@@ -147,11 +124,10 @@ public class KnobRotator : MonoBehaviour
         }
     }
     
-    float NormalizeAngle(float angle)
->>>>>>> 1b2f03821ea65495ee9d86843a6ab0ffa6a5c3d7
+    void UpdateTemperature(float angle)
     {
         float finalAngle = NormalizeAngle(angle);
-
+        
         if (finalAngle >= -30 && finalAngle <= 30)
         {
             currentTemperature = 20f;  // neutre
@@ -167,7 +143,7 @@ public class KnobRotator : MonoBehaviour
             currentTemperature = Mathf.Lerp(20, 60, t); // Hot
         }
     }
-
+    
     float NormalizeAngle(float a)
     {
         if (a > 180) a -= 360;
