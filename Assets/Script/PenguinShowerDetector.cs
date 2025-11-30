@@ -3,8 +3,8 @@ using UnityEngine;
 public class PenguinShowerDetector : MonoBehaviour
 {
     [Header("Shower Settings")]
-    public float requiredWetTime = 30f;       // Temps total pour être mouillé
-    public ParticleSystem showerParticles;    // Référence au particle system
+    public float requiredWetTime = 30f;
+    public ParticleSystem showerParticles;
 
     [Header("Progression")]
     public float wetProgress = 0f;
@@ -12,6 +12,9 @@ public class PenguinShowerDetector : MonoBehaviour
     private bool isUnderShower = false;
     private float timeUnderShower = 0f;
     private float nextProgressLog = 0f;
+
+    private int initialFoamCount = -1;   // <- Stocke le nombre de bulles au début du rinçage
+
 
     void Update()
     {
@@ -21,24 +24,55 @@ public class PenguinShowerDetector : MonoBehaviour
         timeUnderShower += Time.deltaTime;
         wetProgress = Mathf.Clamp01(timeUnderShower / requiredWetTime);
 
-        // Log chaque seconde
+        // Log 
         if (timeUnderShower >= nextProgressLog)
         {
             Debug.Log($"Mouillage : {(wetProgress * 100f):F0}%");
             nextProgressLog += 1f;
         }
 
-        if (wetProgress >= 1f)
+        // Enregistrer le nombre initial de bulles au tout début du rinçage
+        if (initialFoamCount == -1)
         {
-            Debug.Log("Pingouin totalement mouillé !");
+            initialFoamCount = SoapWashDetector_Simple.foamInstances.Count;
         }
 
-        // IMPORTANT : reset l'état à chaque frame
-        // il faudra recevoir une collision pour qu'il reste "sous la douche"
+        // --- SUPPRESSION PROPORTIONNELLE ---
+        RemoveFoamProportionally();
+
+        // Reset shower flag
         isUnderShower = false;
     }
 
-    // Détection des collisions de particules
+
+
+    private void RemoveFoamProportionally()
+    {
+        if (initialFoamCount <= 0)
+            return;
+
+        // combien de bulles doivent RESTER ?
+        int bubblesToKeep = Mathf.RoundToInt(initialFoamCount * (1f - wetProgress));
+
+        // combien de bulles nous avons actuellement ?
+        int currentCount = SoapWashDetector_Simple.foamInstances.Count;
+
+        // s’il y en a trop, on en supprime
+        while (currentCount > bubblesToKeep)
+        {
+            GameObject foam = SoapWashDetector_Simple.foamInstances[currentCount - 1];
+
+            if (foam != null)
+                GameObject.Destroy(foam);
+
+            SoapWashDetector_Simple.foamInstances.RemoveAt(currentCount - 1);
+
+            currentCount--;
+        }
+    }
+
+
+
     private void OnParticleCollision(GameObject other)
     {
         if (other == showerParticles.gameObject)

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic; // IMPORTANT pour List<T>
 
 public class SoapWashDetector_Simple : MonoBehaviour
 {
@@ -10,8 +11,21 @@ public class SoapWashDetector_Simple : MonoBehaviour
     [Header("Progression")]
     public float washProgress = 0f;
 
-    [Header("Effets")]
+    [Header("Effets temporaires (Bulles du savon)")]
     public ParticleSystem bubbleParticles;
+
+    [Header("Mousse persistante")]
+    public GameObject foamPrefab;                // <<< manquait dans ton code !
+    public Transform penguinRoot;
+    public float foamSpawnRate = 0.05f;
+    private float lastFoamTime = 0f;
+
+    // Liste globale des bulles créées
+    public static List<GameObject> foamInstances = new List<GameObject>();
+
+    [Header("Taille de la mousse (aléatoire)")]
+    public float foamMinScale = 0.02f;
+    public float foamMaxScale = 0.06f;
 
     private Vector3 lastPos;
     private Vector3 lastVelocity;
@@ -19,8 +33,8 @@ public class SoapWashDetector_Simple : MonoBehaviour
     private UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable grab;
     private bool isHeld = false;
 
-    // ---- NOUVEAU ----
     private bool isTouchingPenguin = false;
+
 
     void Start()
     {
@@ -46,6 +60,7 @@ public class SoapWashDetector_Simple : MonoBehaviour
         });
     }
 
+
     void Update()
     {
         if (!isHeld)
@@ -57,16 +72,17 @@ public class SoapWashDetector_Simple : MonoBehaviour
         {
             float dirDot = Vector3.Dot(velocity.normalized, lastVelocity.normalized);
 
-            // Condition : accélération + changement de direction
             if (dirDot < -minDirectionChange)
             {
-                // ---- NOUVELLE CONDITION ----
                 if (isTouchingPenguin)
                 {
                     washProgress = Mathf.Clamp01(washProgress + washScorePerSwipe);
 
                     if (bubbleParticles != null && !bubbleParticles.isPlaying)
                         bubbleParticles.Play();
+
+                    // --- Spawn mousse persistante ---
+                    TrySpawnFoam();
                 }
             }
         }
@@ -80,8 +96,41 @@ public class SoapWashDetector_Simple : MonoBehaviour
         lastPos = transform.position;
     }
 
-    // ---- DÉTECTION DE CONTACT ----
 
+    // --- Vérifie si on peut spawn une nouvelle bulle ---
+    private void TrySpawnFoam()
+    {
+        if (Time.time - lastFoamTime < foamSpawnRate)
+            return;
+
+        SpawnFoam();
+        lastFoamTime = Time.time;
+    }
+
+
+    // --- Crée une bulle persistante collée au pingouin ---
+    private void SpawnFoam()
+    {
+        if (foamPrefab == null || penguinRoot == null)
+            return;
+
+        Vector3 spawnPos = transform.position;
+
+        GameObject foam = Instantiate(foamPrefab, spawnPos, Quaternion.identity);
+
+        // Taille aléatoire
+        float randomScale = Random.Range(foamMinScale, foamMaxScale);
+        foam.transform.localScale = Vector3.one * randomScale;
+
+        // La mousse reste collée au pingouin
+        foam.transform.SetParent(penguinRoot, true);
+
+        // On l’ajoute à la liste pour pouvoir la supprimer sous la douche
+        foamInstances.Add(foam);
+    }
+
+
+    // ---- Détection de contact avec le pingouin ----
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Penguin"))
