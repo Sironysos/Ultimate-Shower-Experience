@@ -8,10 +8,6 @@ public class HairdryerSoundOnGrab : MonoBehaviour
     [Header("Son du sèche-cheveux")]
     public AudioClip hairdryerSound;
     
-    [Header("Paramètres audio")]
-    [Range(0f, 1f)]
-    public float volume = 0.7f;
-    
     private UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable grabInteractable;
     
     void Start()
@@ -31,15 +27,15 @@ public class HairdryerSoundOnGrab : MonoBehaviour
             audioSource = gameObject.AddComponent<AudioSource>();
         }
         
-        // Configuration pour VR
+        // Configuration pour VR - Son 3D avec volume boosté
         audioSource.playOnAwake = false;
-        audioSource.loop = true; // Important : le son tourne en boucle
+        audioSource.loop = true;
         audioSource.spatialBlend = 1f; // Son 3D
         audioSource.spatialize = true;
-        audioSource.minDistance = 0.5f;
-        audioSource.maxDistance = 15f;
+        audioSource.minDistance = 0.1f; // Distance minimale très proche
+        audioSource.maxDistance = 50f; // Distance maximale étendue
         audioSource.rolloffMode = AudioRolloffMode.Linear;
-        audioSource.volume = volume;
+        audioSource.volume = 3f; // Volume boosté à 300%
         audioSource.clip = hairdryerSound;
         
         // Abonne-toi aux événements de grab
