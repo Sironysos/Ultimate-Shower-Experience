@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 public class PenguinShowerDetector : MonoBehaviour
 {
@@ -9,12 +10,19 @@ public class PenguinShowerDetector : MonoBehaviour
     [Header("Progression")]
     public float wetProgress = 0f;
 
+    [Header("UI Rinçage")]
+    public TextMeshProUGUI rinseProgressText;   // <<< AJOUT
+
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip successSound;
+    private bool hasPlayedSuccess = false;
+
     private bool isUnderShower = false;
     private float timeUnderShower = 0f;
     private float nextProgressLog = 0f;
 
-    private int initialFoamCount = -1;   // <- Stocke le nombre de bulles au d�but du rin�age
-
+    private int initialFoamCount = -1;
 
     void Update()
     {
@@ -24,26 +32,26 @@ public class PenguinShowerDetector : MonoBehaviour
         timeUnderShower += Time.deltaTime;
         wetProgress = Mathf.Clamp01(timeUnderShower / requiredWetTime);
 
-        // Log 
+        // Log chaque seconde
         if (timeUnderShower >= nextProgressLog)
         {
             Debug.Log($"Mouillage : {(wetProgress * 100f):F0}%");
             nextProgressLog += 1f;
         }
 
-        // Enregistrer le nombre initial de bulles au tout d�but du rin�age
+        // Initialisation du nombre total de bulles
         if (initialFoamCount == -1)
         {
             initialFoamCount = SoapWashDetector_Simple.foamInstances.Count;
+            UpdateRinseProgressUI(); // affiche "0 %"
         }
 
-        // --- SUPPRESSION PROPORTIONNELLE ---
+        // Suppression progressive proportionnelle
         RemoveFoamProportionally();
 
-        // Reset shower flag
+        // Reset pour la prochaine frame
         isUnderShower = false;
     }
-
 
 
     private void RemoveFoamProportionally()
@@ -51,13 +59,10 @@ public class PenguinShowerDetector : MonoBehaviour
         if (initialFoamCount <= 0)
             return;
 
-        // combien de bulles doivent RESTER ?
         int bubblesToKeep = Mathf.RoundToInt(initialFoamCount * (1f - wetProgress));
 
-        // combien de bulles nous avons actuellement ?
         int currentCount = SoapWashDetector_Simple.foamInstances.Count;
 
-        // s�il y en a trop, on en supprime
         while (currentCount > bubblesToKeep)
         {
             GameObject foam = SoapWashDetector_Simple.foamInstances[currentCount - 1];
@@ -66,19 +71,49 @@ public class PenguinShowerDetector : MonoBehaviour
                 GameObject.Destroy(foam);
 
             SoapWashDetector_Simple.foamInstances.RemoveAt(currentCount - 1);
-
             currentCount--;
         }
+
+        UpdateRinseProgressUI();  // <<< AJOUT : mettre à jour l’UI à chaque changement
     }
 
 
+    private void UpdateRinseProgressUI()
+    {
+        if (rinseProgressText == null || initialFoamCount <= 0)
+            return;
+
+        int remaining = SoapWashDetector_Simple.foamInstances.Count;
+        int removed = initialFoamCount - remaining;
+
+        // 🚫 Aucune bulle retirée = 0%
+        if (removed <= 0)
+        {
+            rinseProgressText.text = "0 %";
+            return;
+        }
+
+        float progress = Mathf.Clamp01((float)removed / initialFoamCount);
+        int percent = Mathf.RoundToInt(progress * 100f);
+
+        rinseProgressText.text = percent + " %";
+
+        // 🎉 Succès : toutes les bulles sont retirées
+        if (!hasPlayedSuccess && percent >= 100)
+        {
+            hasPlayedSuccess = true;
+
+            if (audioSource != null && successSound != null)
+                audioSource.PlayOneShot(successSound);
+
+            Debug.Log("🎉 Succès : Pingouin totalement rincé !");
+        }
+    }
 
     private void OnParticleCollision(GameObject other)
     {
         if (other == showerParticles.gameObject)
-        {
             isUnderShower = true;
-        }
     }
 
     private void OnParticleTrigger()

@@ -1,28 +1,37 @@
 using UnityEngine;
+using TMPro;
 
 public class BucketWaterFillAndDrain : MonoBehaviour
 {
     [Header("Shower Settings")]
     public ParticleSystem showerParticles;
-    public float timeToFill = 10f;              // Temps pour remplir complètement
+    public float timeToFill = 10f;
 
     [Header("Vidage du seau")]
-    public float minTiltAngleToDrain = 40f;     // Angle minimum pour commencer à vider
-    public float maxTiltAngle = 120f;           // Angle où ça coule très vite
-    public float minDrainSpeed = 0.2f;          // Vitesse minimale de vidage
-    public float maxDrainSpeed = 2f;            // Vitesse maximale de vidage
-    public ParticleSystem drainParticles;       // Particules quand le seau se vide
+    public float minTiltAngleToDrain = 40f;
+    public float maxTiltAngle = 120f;
+    public float minDrainSpeed = 0.2f;
+    public float maxDrainSpeed = 2f;
+    public ParticleSystem drainParticles;
 
     [Header("Meshes du seau")]
-    public GameObject[] bucketLevels;           // 0 = vide, ... = plein
+    public GameObject[] bucketLevels;
 
-    private float fillProgress = 0f;            // 0 à 1
+    [Header("UI Progression")]
+    public TextMeshProUGUI progressText;
+
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip successSound;
+    private bool hasPlayedSuccess = false;
+
+    private float fillProgress = 0f;        
     private float timeUnderShower = 0f;
     private bool isUnderShower = false;
 
     void Start()
     {
-        SetBucketLevel(0);  // Commencer vide
+        SetBucketLevel(0); 
     }
 
     void Update()
@@ -30,13 +39,33 @@ public class BucketWaterFillAndDrain : MonoBehaviour
         HandleFill();
         HandleDrain();
         UpdateBucketMesh();
+        UpdateUIProgress();
 
-        // Reset shower detection (doit être remis à true via OnParticleCollision)
         isUnderShower = false;
     }
 
-    // ---------------------- REMPLISSAGE ----------------------
+    // ---------------------- UI UPDATE ----------------------
+    private void UpdateUIProgress()
+    {
+        if (progressText == null)
+            return;
 
+        int percent = Mathf.RoundToInt(fillProgress * 100f);
+        progressText.text = percent + " %";
+
+        // ðŸŽ‰ SuccÃ¨s : seau totalement rempli
+        if (!hasPlayedSuccess && fillProgress >= 1f)
+        {
+            hasPlayedSuccess = true;
+
+            if (audioSource != null && successSound != null)
+                audioSource.PlayOneShot(successSound);
+
+            Debug.Log("ðŸŽ‰ SuccÃ¨s : Seau complÃ¨tement rempli !");
+        }
+    }
+
+    // ---------------------- REMPLISSAGE ----------------------
     private void HandleFill()
     {
         if (!isUnderShower)
@@ -49,9 +78,7 @@ public class BucketWaterFillAndDrain : MonoBehaviour
     private void OnParticleCollision(GameObject other)
     {
         if (other == showerParticles.gameObject)
-        {
             isUnderShower = true;
-        }
     }
 
     private void OnParticleTrigger()
@@ -60,10 +87,8 @@ public class BucketWaterFillAndDrain : MonoBehaviour
     }
 
     // ---------------------- VIDAGE ----------------------
-
     private void HandleDrain()
     {
-        // Si seau déjà vide ? ne rien faire
         if (fillProgress <= 0f)
         {
             if (drainParticles != null && drainParticles.isPlaying)
@@ -71,10 +96,8 @@ public class BucketWaterFillAndDrain : MonoBehaviour
             return;
         }
 
-        // Calcul de l'angle d'inclinaison
         float tiltAngle = Vector3.Angle(transform.up, Vector3.up);
 
-        // Pas assez incliné ? pas de vidage
         if (tiltAngle < minTiltAngleToDrain)
         {
             if (drainParticles != null && drainParticles.isPlaying)
@@ -82,20 +105,17 @@ public class BucketWaterFillAndDrain : MonoBehaviour
             return;
         }
 
-        // Calcul du facteur de vidage basé sur l'angle
         float t = Mathf.InverseLerp(minTiltAngleToDrain, maxTiltAngle, tiltAngle);
         float drainSpeed = Mathf.Lerp(minDrainSpeed, maxDrainSpeed, t);
 
         fillProgress -= drainSpeed * Time.deltaTime;
         fillProgress = Mathf.Clamp01(fillProgress);
 
-        // Jouer particules d'écoulement
         if (drainParticles != null && !drainParticles.isPlaying)
             drainParticles.Play();
     }
 
     // ---------------------- MESH UPDATE ----------------------
-
     private void UpdateBucketMesh()
     {
         int level = Mathf.FloorToInt(fillProgress * (bucketLevels.Length - 1));

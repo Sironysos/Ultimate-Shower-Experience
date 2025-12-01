@@ -1,22 +1,31 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using TMPro;
 
 public class TowelDryDetector_Rigid : MonoBehaviour
 {
     [Header("Réglages du frottement")]
     public float minVelocity = 0.4f;
-    public float minDirectionChange = 0.25f;
-    public float dryScorePerSwipe = 0.3f;
+
+    [Header("Temps pour sécher complètement")]
+    public float requiredDryTime = 30f; // <<< AJOUT
 
     [Header("Progression")]
     public float dryingProgress = 0f; // 0 = trempé, 1 = sec
+
+    [Header("UI Séchage")]
+    public TextMeshProUGUI dryingProgressText;
+
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip successSound;
+
+    private bool hasPlayedSuccess = false;
 
     private Vector3 lastPos;
     private Vector3 lastVelocity;
 
     private UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable grab;
-
-    // ---- NOUVEAU ----
     private bool isTouchingPenguin = false;
 
     void Start()
@@ -26,29 +35,21 @@ public class TowelDryDetector_Rigid : MonoBehaviour
         grab = GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>();
         if (grab != null)
             grab.selectExited.AddListener(OnRelease);
-        else
-            Debug.LogWarning("Aucun XRGrabInteractable trouvé !");
     }
 
     void Update()
     {
         Vector3 velocity = (transform.position - lastPos) / Time.deltaTime;
 
-        if (velocity.magnitude > minVelocity)
+        // Séchage continu tant que la serviette bouge ET touche le pingouin
+        if (isTouchingPenguin && velocity.magnitude > minVelocity)
         {
-            float dirDot = Vector3.Dot(velocity.normalized, lastVelocity.normalized);
+            dryingProgress += Time.deltaTime / requiredDryTime;
+            dryingProgress = Mathf.Clamp01(dryingProgress);
 
-            // Détection du va-et-vient
-            if (dirDot < -minDirectionChange)
-            {
-                // ---- CONDITION IMPORTANTE ----
-                if (isTouchingPenguin)
-                {
-                    dryingProgress = Mathf.Clamp01(dryingProgress + dryScorePerSwipe);
-
-                    Debug.Log($"Séchage → {dryingProgress * 100f}%");
-                }
-            }
+            Debug.Log($"Séchage → {dryingProgress * 100f}%");
+            UpdateDryingUI();
+            CheckSuccessSound();
         }
 
         lastVelocity = velocity;
@@ -63,24 +64,40 @@ public class TowelDryDetector_Rigid : MonoBehaviour
     public void ResetDrying()
     {
         dryingProgress = 0f;
+        UpdateDryingUI();
     }
 
-    // -------- DÉTECTION DE CONTACT --------
+    private void UpdateDryingUI()
+    {
+        if (dryingProgressText == null)
+            return;
+
+        int percent = Mathf.RoundToInt(dryingProgress * 100f);
+        dryingProgressText.text = percent + " %";
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Penguin"))
-        {
             isTouchingPenguin = true;
-            Debug.Log("Serviette en contact avec le pingouin.");
-        }
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Penguin"))
-        {
             isTouchingPenguin = false;
-            Debug.Log("Serviette n'est plus en contact avec le pingouin.");
+    }
+
+    private void CheckSuccessSound()
+    {
+        if (!hasPlayedSuccess && dryingProgress >= 1f)
+        {
+            hasPlayedSuccess = true;
+
+            if (audioSource != null && successSound != null)
+                audioSource.PlayOneShot(successSound);
+
+            Debug.Log("🎉 Succès : Pingouin complètement sec !");
         }
     }
 }

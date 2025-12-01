@@ -1,13 +1,22 @@
 using UnityEngine;
+using TMPro;
 
 public class PlantShowerDetector : MonoBehaviour
 {
     [Header("Shower Settings")]
-    public float requiredWetTime = 30f;       // Temps total pour être mouillé
-    public ParticleSystem showerParticles;    // Référence au particle system
+    public float requiredWetTime = 30f;
+    public ParticleSystem showerParticles;
 
     [Header("Progression")]
     public float wetProgress = 0f;
+
+    [Header("UI de progression")]
+    public TextMeshProUGUI progressText;
+
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip successSound;
+    private bool hasPlayedSuccess = false;
 
     private bool isUnderShower = false;
     private float timeUnderShower = 0f;
@@ -21,7 +30,9 @@ public class PlantShowerDetector : MonoBehaviour
         timeUnderShower += Time.deltaTime;
         wetProgress = Mathf.Clamp01(timeUnderShower / requiredWetTime);
 
-        // Log chaque seconde
+        UpdateUIProgress();
+        CheckSuccessSound();   // <<< AJOUT
+
         if (timeUnderShower >= nextProgressLog)
         {
             Debug.Log($"Plante mouillage : {(wetProgress * 100f):F0}%");
@@ -30,21 +41,38 @@ public class PlantShowerDetector : MonoBehaviour
 
         if (wetProgress >= 1f)
         {
-            Debug.Log("Plante totalement arrosée !");
+            Debug.Log("Plante totalement arrosÃ©e !");
         }
 
-        // IMPORTANT : reset l'état à chaque frame
-        // il faudra recevoir une collision pour qu'il reste "sous la douche"
         isUnderShower = false;
     }
 
-    // Détection des collisions de particules
+    private void UpdateUIProgress()
+    {
+        if (progressText == null)
+            return;
+
+        int percent = Mathf.RoundToInt(wetProgress * 100f);
+        progressText.text = percent + " %";
+    }
+
+    private void CheckSuccessSound()
+    {
+        if (!hasPlayedSuccess && wetProgress >= 1f)
+        {
+            hasPlayedSuccess = true;
+
+            if (audioSource != null && successSound != null)
+                audioSource.PlayOneShot(successSound);
+
+            Debug.Log("ðŸŽ‰SuccÃ¨s : Plante complÃ¨tement arrosÃ©e !");
+        }
+    }
+
     private void OnParticleCollision(GameObject other)
     {
         if (other == showerParticles.gameObject)
-        {
             isUnderShower = true;
-        }
     }
 
     private void OnParticleTrigger()

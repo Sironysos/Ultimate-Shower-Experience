@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using TMPro;
 
 public class SoapWashDetector_Simple : MonoBehaviour
 {
@@ -9,7 +10,15 @@ public class SoapWashDetector_Simple : MonoBehaviour
 
     [Header("Progression (savonnage)")]
     public float washProgress = 0f;
-    public int bubblesNeededForFullWash = 50;  // Nombre de bulles pour atteindre 100%
+    public int bubblesNeededForFullWash = 50;
+
+    [Header("UI Savonnage")]
+    public TextMeshProUGUI washProgressText;
+
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip successSound;
+    private bool hasPlayedSuccess = false;
 
     [Header("Mousse persistante")]
     public GameObject foamPrefab;
@@ -17,7 +26,6 @@ public class SoapWashDetector_Simple : MonoBehaviour
     public float foamSpawnRate = 0.05f;
     private float lastFoamTime = 0f;
 
-    // Liste globale des bulles créées
     public static List<GameObject> foamInstances = new List<GameObject>();
 
     [Header("Taille de la mousse (aléatoire)")]
@@ -29,7 +37,6 @@ public class SoapWashDetector_Simple : MonoBehaviour
 
     private UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable grab;
     private bool isHeld = false;
-
     private bool isTouchingPenguin = false;
 
     private BubbleSoundOnSpawnRandom bubbleSoundManager;
@@ -84,7 +91,6 @@ public class SoapWashDetector_Simple : MonoBehaviour
     }
 
 
-    // Ajoute une nouvelle bulle au bon rythme
     private void TrySpawnFoam()
     {
         if (Time.time - lastFoamTime < foamSpawnRate)
@@ -95,56 +101,57 @@ public class SoapWashDetector_Simple : MonoBehaviour
     }
 
 
-    // Crée une bulle et l’attache au pingouin
     private void SpawnFoam()
     {
         if (foamPrefab == null || penguinRoot == null)
             return;
 
         Vector3 spawnPos = transform.position;
-
         GameObject foam = Instantiate(foamPrefab, spawnPos, Quaternion.identity);
 
-        // Taille aléatoire
         float randomScale = Random.Range(foamMinScale, foamMaxScale);
         foam.transform.localScale = Vector3.one * randomScale;
 
-        // La mousse reste collée au pingouin
         foam.transform.SetParent(penguinRoot, true);
-
-        // On ajoute à la liste
         foamInstances.Add(foam);
 
-        // ---- Joue le son de bulle ----
         if (bubbleSoundManager != null)
             bubbleSoundManager.PlayBubbleSound();
     }
 
 
-
-    // Met à jour la progression selon le nombre de bulles créées
     private void UpdateWashProgress()
     {
         washProgress = Mathf.Clamp01((float)foamInstances.Count / bubblesNeededForFullWash);
+        int percent = Mathf.RoundToInt(washProgress * 100f);
 
-        Debug.Log($"Savonnage : {(washProgress * 100f):F0}%");
+        if (washProgressText != null)
+            washProgressText.text = percent + " %";
+
+        Debug.Log($"Savonnage : {percent}%");
+
+        // 🎉 Succès : Pingouin entièrement savonné !
+        if (!hasPlayedSuccess && washProgress >= 1f)
+        {
+            hasPlayedSuccess = true;
+
+            if (audioSource != null && successSound != null)
+                audioSource.PlayOneShot(successSound);
+
+            Debug.Log("🎉 Succès : pingouin entièrement savonné !");
+        }
     }
 
 
-    // Détection contact pingouin
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Penguin"))
-        {
             isTouchingPenguin = true;
-        }
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Penguin"))
-        {
             isTouchingPenguin = false;
-        }
     }
 }
