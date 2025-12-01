@@ -19665,7 +19665,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 320684e92e0639f4baa5f1039b0ac20e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  requiredWetTime: 30
+  requiredWetTime: 15
   showerParticles: {fileID: 2100800889}
   wetProgress: 0
   rinseProgressText: {fileID: 128650700}
